@@ -16,6 +16,17 @@
  */
 package net.oauth.example.consumer.service;
 
+import net.oauth.OAuthAccessor;
+import net.oauth.OAuthConsumer;
+import net.oauth.OAuthException;
+import net.oauth.OAuthMessage;
+import net.oauth.ParameterStyle;
+import net.oauth.client.OAuthClient;
+import net.oauth.client.httpclient3.HttpClient3;
+import net.oauth.example.consumer.ExoOAuthConsumerStorage;
+import net.oauth.example.consumer.ExoOAuthMessage;
+import net.oauth.example.consumer.RedirectException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,17 +35,6 @@ import java.net.URISyntaxException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import net.oauth.OAuthAccessor;
-import net.oauth.OAuthConsumer;
-import net.oauth.OAuthException;
-import net.oauth.OAuthMessage;
-import net.oauth.ParameterStyle;
-import net.oauth.client.OAuthClient;
-import net.oauth.client.httpclient3.HttpClient3;
-import net.oauth.example.consumer.ExoOAuthMessage;
-import net.oauth.example.consumer.ExoOAuthConsumerStorage;
-import net.oauth.example.consumer.RedirectException;
 
 /**
  * Created by The eXo Platform SAS
@@ -45,18 +45,22 @@ import net.oauth.example.consumer.RedirectException;
 public class ExoOAuth2LeggedConsumerService
 {
    public static final OAuthClient CLIENT = new OAuthClient(new HttpClient3());
-   
-   public ExoOAuth2LeggedConsumerService(){}
-   
-   public ExoOAuthMessage send(String consumerName, String restEndpointUrl, HttpServletRequest request, HttpServletResponse response) 
-   throws OAuthException, IOException, URISyntaxException{      
+
+   public ExoOAuth2LeggedConsumerService()
+   {
+   }
+
+   public ExoOAuthMessage send(String consumerName, String restEndpointUrl, HttpServletRequest request,
+      HttpServletResponse response) throws OAuthException, IOException, URISyntaxException
+   {
       OAuthConsumer consumer = ExoOAuthConsumerStorage.getConsumer(consumerName);
       OAuthAccessor accessor = getAccessor(request, response, consumer);
       OAuthMessage message = accessor.newRequestMessage(OAuthMessage.GET, restEndpointUrl, null);
 
-      OAuthMessage responseMessage = ExoOAuth2LeggedConsumerService.CLIENT.invoke(message, ParameterStyle.AUTHORIZATION_HEADER);
+      OAuthMessage responseMessage =
+         ExoOAuth2LeggedConsumerService.CLIENT.invoke(message, ParameterStyle.AUTHORIZATION_HEADER);
       return (new ExoOAuthMessage(consumerName, responseMessage));
-   }  
+   }
 
    /**
     * Get the access token and token secret for the given consumer. Get them
@@ -65,54 +69,70 @@ public class ExoOAuth2LeggedConsumerService
     * @throws IOException 
     * @throws URISyntaxException 
     */
-   public static OAuthAccessor getAccessor(HttpServletRequest request,
-           HttpServletResponse response, OAuthConsumer consumer)
-           throws OAuthException, IOException, URISyntaxException {
-       OAuthAccessor accessor = new OAuthAccessor(consumer);
-       return accessor;
-   }
-   
-   public static void copyResponse(ExoOAuthMessage from, HttpServletResponse into) throws IOException {
-       InputStream in = from.getMessage().getBodyAsStream();
-       OutputStream out = into.getOutputStream();
-       into.setContentType(from.getMessage().getHeader("Content-Type"));
-       try {
-           ExoOAuth2LeggedConsumerService.copyAll(in, out);
-       } finally {
-           in.close();
-       }
+   public static OAuthAccessor getAccessor(HttpServletRequest request, HttpServletResponse response,
+      OAuthConsumer consumer) throws OAuthException, IOException, URISyntaxException
+   {
+      OAuthAccessor accessor = new OAuthAccessor(consumer);
+      return accessor;
    }
 
-   private static void copyAll(InputStream from, OutputStream into) throws IOException {
-       byte[] buffer = new byte[1024];
-       for (int len; 0 < (len = from.read(buffer, 0, buffer.length));) {
-           into.write(buffer, 0, len);
-       }
+   public static void copyResponse(ExoOAuthMessage from, HttpServletResponse into) throws IOException
+   {
+      InputStream in = from.getMessage().getBodyAsStream();
+      OutputStream out = into.getOutputStream();
+      into.setContentType(from.getMessage().getHeader("Content-Type"));
+      try
+      {
+         ExoOAuth2LeggedConsumerService.copyAll(in, out);
+      }
+      finally
+      {
+         in.close();
+      }
    }
-   
+
+   private static void copyAll(InputStream from, OutputStream into) throws IOException
+   {
+      byte[] buffer = new byte[1024];
+      for (int len; 0 < (len = from.read(buffer, 0, buffer.length));)
+      {
+         into.write(buffer, 0, len);
+      }
+   }
+
    /**
     * Handle an exception that occurred while processing an HTTP request.
     * Depending on the exception, either send a response, redirect the client
     * or propagate an exception.
     */
-   public static void handleException(Exception e, HttpServletRequest request,
-           HttpServletResponse response, String consumerName)
-           throws IOException, ServletException {
-       if (e instanceof RedirectException) {
-           RedirectException redirect = (RedirectException) e;
-           String targetURL = redirect.getTargetURL();
-           if (targetURL != null) {
-               response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
-               response.setHeader("Location", targetURL);
-           }
-       } else if (e instanceof IOException) {
-           throw (IOException) e;
-       } else if (e instanceof ServletException) {
-           throw (ServletException) e;
-       } else if (e instanceof RuntimeException) {
-           throw (RuntimeException) e;
-       } else {
-           throw new ServletException(e);
-       }
+   public static void handleException(Exception e, HttpServletRequest request, HttpServletResponse response,
+      String consumerName) throws IOException, ServletException
+   {
+      if (e instanceof RedirectException)
+      {
+         RedirectException redirect = (RedirectException)e;
+         String targetURL = redirect.getTargetURL();
+         if (targetURL != null)
+         {
+            response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+            response.setHeader("Location", targetURL);
+         }
+      }
+      else if (e instanceof IOException)
+      {
+         throw (IOException)e;
+      }
+      else if (e instanceof ServletException)
+      {
+         throw (ServletException)e;
+      }
+      else if (e instanceof RuntimeException)
+      {
+         throw (RuntimeException)e;
+      }
+      else
+      {
+         throw new ServletException(e);
+      }
    }
 }

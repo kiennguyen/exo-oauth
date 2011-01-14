@@ -16,15 +16,15 @@
  */
 package net.oauth.example.consumer.servlet;
 
+import net.oauth.example.consumer.ExoOAuthMessage;
+import net.oauth.example.consumer.service.ExoOAuth2LeggedConsumerService;
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import net.oauth.example.consumer.ExoOAuthMessage;
-import net.oauth.example.consumer.service.ExoOAuth2LeggedConsumerService;
 
 /**
  * Created by The eXo Platform SAS

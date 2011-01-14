@@ -16,13 +16,6 @@
 
 package net.oauth.example.consumer;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.logging.Logger;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import net.oauth.OAuth;
 import net.oauth.OAuthAccessor;
 import net.oauth.OAuthConsumer;
@@ -30,6 +23,15 @@ import net.oauth.OAuthMessage;
 import net.oauth.OAuthProblemException;
 import net.oauth.example.consumer.service.ExoOAuth3LeggedConsumerService;
 import net.oauth.server.OAuthServlet;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.logging.Logger;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * An OAuth callback handler.

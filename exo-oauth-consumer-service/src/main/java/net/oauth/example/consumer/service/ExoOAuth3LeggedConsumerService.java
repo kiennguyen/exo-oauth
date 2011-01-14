@@ -16,6 +16,20 @@
  */
 package net.oauth.example.consumer.service;
 
+import net.oauth.OAuth;
+import net.oauth.OAuthAccessor;
+import net.oauth.OAuthConsumer;
+import net.oauth.OAuthException;
+import net.oauth.OAuthMessage;
+import net.oauth.OAuthProblemException;
+import net.oauth.ParameterStyle;
+import net.oauth.example.consumer.CookieMap;
+import net.oauth.example.consumer.ExoOAuth3LeggedCallback;
+import net.oauth.example.consumer.ExoOAuthConsumerStorage;
+import net.oauth.example.consumer.ExoOAuthMessage;
+import net.oauth.example.consumer.RedirectException;
+import net.oauth.server.OAuthServlet;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -31,20 +45,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.oauth.OAuth;
-import net.oauth.OAuthAccessor;
-import net.oauth.OAuthConsumer;
-import net.oauth.OAuthException;
-import net.oauth.OAuthMessage;
-import net.oauth.OAuthProblemException;
-import net.oauth.ParameterStyle;
-import net.oauth.example.consumer.CookieMap;
-import net.oauth.example.consumer.ExoOAuthMessage;
-import net.oauth.example.consumer.ExoOAuth3LeggedCallback;
-import net.oauth.example.consumer.ExoOAuthConsumerStorage;
-import net.oauth.example.consumer.RedirectException;
-import net.oauth.server.OAuthServlet;
-
 /**
  * Created by The eXo Platform SAS
  * Author : Nguyen Anh Kien
@@ -52,33 +52,37 @@ import net.oauth.server.OAuthServlet;
  * Dec 3, 2010  
  */
 public class ExoOAuth3LeggedConsumerService extends ExoOAuth2LeggedConsumerService
-{   
-   public ExoOAuth3LeggedConsumerService(){}
-   
-   public ExoOAuthMessage send(String consumerName, String restEndpointUrl, HttpServletRequest request, HttpServletResponse response) 
-   throws OAuthException, IOException, URISyntaxException{      
+{
+   public ExoOAuth3LeggedConsumerService()
+   {
+   }
+
+   public ExoOAuthMessage send(String consumerName, String restEndpointUrl, HttpServletRequest request,
+      HttpServletResponse response) throws OAuthException, IOException, URISyntaxException
+   {
       OAuthConsumer consumer = ExoOAuthConsumerStorage.getConsumer(consumerName);
       OAuthAccessor accessor = getAccessor(request, response, consumer);
       OAuthMessage message = accessor.newRequestMessage(OAuthMessage.GET, restEndpointUrl, null);
 
-      OAuthMessage responseMessage = ExoOAuth2LeggedConsumerService.CLIENT.invoke(message, ParameterStyle.AUTHORIZATION_HEADER);
+      OAuthMessage responseMessage =
+         ExoOAuth2LeggedConsumerService.CLIENT.invoke(message, ParameterStyle.AUTHORIZATION_HEADER);
       return (new ExoOAuthMessage(consumerName, responseMessage));
-   }  
-   
+   }
+
    /**
     * Construct an accessor from cookies. The resulting accessor won't
     * necessarily have any tokens.
     */
-   public static OAuthAccessor newAccessor(OAuthConsumer consumer, CookieMap cookies)
-           throws OAuthException {
-       OAuthAccessor accessor = new OAuthAccessor(consumer);
-       String consumerName = (String) consumer.getProperty("name");
-       accessor.requestToken = cookies.get(consumerName + ".requestToken");
-       accessor.accessToken = cookies.get(consumerName + ".accessToken");
-       accessor.tokenSecret = cookies.get(consumerName + ".tokenSecret");
-       return accessor;
+   public static OAuthAccessor newAccessor(OAuthConsumer consumer, CookieMap cookies) throws OAuthException
+   {
+      OAuthAccessor accessor = new OAuthAccessor(consumer);
+      String consumerName = (String)consumer.getProperty("name");
+      accessor.requestToken = cookies.get(consumerName + ".requestToken");
+      accessor.accessToken = cookies.get(consumerName + ".accessToken");
+      accessor.tokenSecret = cookies.get(consumerName + ".tokenSecret");
+      return accessor;
    }
-   
+
    /**
     * Get the access token and token secret for the given consumer. Get them
     * from cookies if possible; otherwise obtain them from the service
@@ -86,28 +90,31 @@ public class ExoOAuth3LeggedConsumerService extends ExoOAuth2LeggedConsumerServi
     * @throws IOException 
     * @throws URISyntaxException 
     */
-   public static OAuthAccessor getAccessor(HttpServletRequest request,
-           HttpServletResponse response, OAuthConsumer consumer)
-           throws OAuthException, IOException, URISyntaxException {
-       CookieMap cookies = new CookieMap(request, response);
-       OAuthAccessor accessor = newAccessor(consumer, cookies);
-       if (accessor.accessToken == null) {
-           getAccessToken(request, cookies, accessor);
-       }
-       return accessor;
+   public static OAuthAccessor getAccessor(HttpServletRequest request, HttpServletResponse response,
+      OAuthConsumer consumer) throws OAuthException, IOException, URISyntaxException
+   {
+      CookieMap cookies = new CookieMap(request, response);
+      OAuthAccessor accessor = newAccessor(consumer, cookies);
+      if (accessor.accessToken == null)
+      {
+         getAccessToken(request, cookies, accessor);
+      }
+      return accessor;
    }
-   
+
    /** Remove all the cookies that contain accessors' data. */
-   public static void removeAccessors(CookieMap cookies) {
-       List<String> names = new ArrayList<String>(cookies.keySet());
-       for (String name : names) {
-           if (name.endsWith(".requestToken") || name.endsWith(".accessToken")
-                   || name.endsWith(".tokenSecret")) {
-               cookies.remove(name);
-           }
-       }
+   public static void removeAccessors(CookieMap cookies)
+   {
+      List<String> names = new ArrayList<String>(cookies.keySet());
+      for (String name : names)
+      {
+         if (name.endsWith(".requestToken") || name.endsWith(".accessToken") || name.endsWith(".tokenSecret"))
+         {
+            cookies.remove(name);
+         }
+      }
    }
-   
+
    /**
     * Get a fresh access token from the service provider.
     * @throws IOException 
@@ -116,127 +123,150 @@ public class ExoOAuth3LeggedConsumerService extends ExoOAuth2LeggedConsumerServi
     * @throws RedirectException
     *             to obtain authorization
     */
-   private static void getAccessToken(HttpServletRequest request,
-           CookieMap cookies, OAuthAccessor accessor)
-       throws OAuthException, IOException, URISyntaxException
+   private static void getAccessToken(HttpServletRequest request, CookieMap cookies, OAuthAccessor accessor)
+      throws OAuthException, IOException, URISyntaxException
    {
-       final String consumerName = (String) accessor.consumer.getProperty("name");
-       final String callbackURL = getCallbackURL(request, consumerName);
-       List<OAuth.Parameter> parameters = OAuth.newList(OAuth.OAUTH_CALLBACK, callbackURL);
-       // Google needs to know what you intend to do with the access token:
-       Object scope = accessor.consumer.getProperty("request.scope");
-       if (scope != null) {
-           parameters.add(new OAuth.Parameter("scope", scope.toString()));
-       }
-       OAuthMessage response = CLIENT.getRequestTokenResponse(accessor, null, parameters);
-       cookies.put(consumerName + ".requestToken", accessor.requestToken);
-       cookies.put(consumerName + ".tokenSecret", accessor.tokenSecret);
-       String authorizationURL = accessor.consumer.serviceProvider.userAuthorizationURL;
-       if (authorizationURL.startsWith("/")) {
-           authorizationURL = (new URL(new URL(request.getRequestURL()
-                   .toString()), request.getContextPath() + authorizationURL))
-                   .toString();
-       }
-       authorizationURL = OAuth.addParameters(authorizationURL //
-               , OAuth.OAUTH_TOKEN, accessor.requestToken);
-       if (response.getParameter(OAuth.OAUTH_CALLBACK_CONFIRMED) == null) {
-           authorizationURL = OAuth.addParameters(authorizationURL //
-                   , OAuth.OAUTH_CALLBACK, callbackURL);
-       }
-       throw new RedirectException(authorizationURL);
+      final String consumerName = (String)accessor.consumer.getProperty("name");
+      final String callbackURL = getCallbackURL(request, consumerName);
+      List<OAuth.Parameter> parameters = OAuth.newList(OAuth.OAUTH_CALLBACK, callbackURL);
+      // Google needs to know what you intend to do with the access token:
+      Object scope = accessor.consumer.getProperty("request.scope");
+      if (scope != null)
+      {
+         parameters.add(new OAuth.Parameter("scope", scope.toString()));
+      }
+      OAuthMessage response = CLIENT.getRequestTokenResponse(accessor, null, parameters);
+      cookies.put(consumerName + ".requestToken", accessor.requestToken);
+      cookies.put(consumerName + ".tokenSecret", accessor.tokenSecret);
+      String authorizationURL = accessor.consumer.serviceProvider.userAuthorizationURL;
+      if (authorizationURL.startsWith("/"))
+      {
+         authorizationURL =
+            (new URL(new URL(request.getRequestURL().toString()), request.getContextPath() + authorizationURL))
+               .toString();
+      }
+      authorizationURL = OAuth.addParameters(authorizationURL //
+         , OAuth.OAUTH_TOKEN, accessor.requestToken);
+      if (response.getParameter(OAuth.OAUTH_CALLBACK_CONFIRMED) == null)
+      {
+         authorizationURL = OAuth.addParameters(authorizationURL //
+            , OAuth.OAUTH_CALLBACK, callbackURL);
+      }
+      throw new RedirectException(authorizationURL);
    }
-   
-   private static String getCallbackURL(HttpServletRequest request, String consumerName)
-   throws IOException
+
+   private static String getCallbackURL(HttpServletRequest request, String consumerName) throws IOException
    {
       URL base = new URL(new URL(request.getRequestURL().toString()), //
-              request.getContextPath() + ExoOAuth3LeggedCallback.PATH);
+         request.getContextPath() + ExoOAuth3LeggedCallback.PATH);
       return OAuth.addParameters(base.toExternalForm() //
-              , "consumer", consumerName //
-              , "returnTo", getRequestPath(request) //
-              );
+         , "consumer", consumerName //
+         , "returnTo", getRequestPath(request) //
+         );
    }
-   
-   /** Reconstruct the requested URL path, complete with query string (if any). */
-   private static String getRequestPath(HttpServletRequest request)
-           throws MalformedURLException {
 
-       URL url = new URL(OAuthServlet.getRequestURL(request));
-       StringBuilder path = new StringBuilder(url.getPath());
-       String queryString = url.getQuery();
-       if (queryString != null) {
-           path.append("?").append(queryString);
-       }
-       return path.toString();
+   /** Reconstruct the requested URL path, complete with query string (if any). */
+   private static String getRequestPath(HttpServletRequest request) throws MalformedURLException
+   {
+
+      URL url = new URL(OAuthServlet.getRequestURL(request));
+      StringBuilder path = new StringBuilder(url.getPath());
+      String queryString = url.getQuery();
+      if (queryString != null)
+      {
+         path.append("?").append(queryString);
+      }
+      return path.toString();
    }
-   
+
    /**
     * The names of problems from which a consumer can recover by getting a
     * fresh token.
     */
    protected static final Collection<String> RECOVERABLE_PROBLEMS = new HashSet<String>();
-   static {
-       RECOVERABLE_PROBLEMS.add("token_revoked");
-       RECOVERABLE_PROBLEMS.add("token_expired");
-       RECOVERABLE_PROBLEMS.add("permission_unknown");
-       // In the case of permission_unknown, getting a fresh token
-       // will cause the Service Provider to ask the User to decide.
+   static
+   {
+      RECOVERABLE_PROBLEMS.add("token_revoked");
+      RECOVERABLE_PROBLEMS.add("token_expired");
+      RECOVERABLE_PROBLEMS.add("permission_unknown");
+      // In the case of permission_unknown, getting a fresh token
+      // will cause the Service Provider to ask the User to decide.
    }
-   
+
    /**
     * Handle an exception that occurred while processing an HTTP request.
     * Depending on the exception, either send a response, redirect the client
     * or propagate an exception.
     */
-   public static void handleException(Exception e, HttpServletRequest request,
-           HttpServletResponse response, String consumerName)
-           throws IOException, ServletException {
-       if (e instanceof RedirectException) {
-           RedirectException redirect = (RedirectException) e;
-           String targetURL = redirect.getTargetURL();
-           if (targetURL != null) {
-               response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
-               response.setHeader("Location", targetURL);
-           }
-       } else if (e instanceof OAuthProblemException) {
-           OAuthProblemException p = (OAuthProblemException) e;
-           String problem = p.getProblem();
-           if (consumerName != null && RECOVERABLE_PROBLEMS.contains(problem)) {
-               try {
-                   CookieMap cookies = new CookieMap(request, response);
-                   OAuthConsumer consumer = ExoOAuthConsumerStorage.getConsumer(consumerName);
-                   OAuthAccessor accessor = newAccessor(consumer, cookies);
-                   getAccessToken(request, cookies, accessor);
-                   // getAccessToken(request, consumer,
-                   // new CookieMap(request, response));
-               } catch (Exception e2) {
-                   handleException(e2, request, response, null);
-               }
-           } else {
-               try {
-                   StringWriter s = new StringWriter();
-                   PrintWriter pw = new PrintWriter(s);
-                   e.printStackTrace(pw);
-                   pw.flush();
-                   p.setParameter("stack trace", s.toString());
-               } catch (Exception rats) {
-               }
-               response.setStatus(p.getHttpStatusCode());
-               response.resetBuffer();
-               request.setAttribute("OAuthProblemException", p);
-               request.getRequestDispatcher //
-                       ("/OAuthProblemException.jsp").forward(request,
-                               response);
-           }
-       } else if (e instanceof IOException) {
-           throw (IOException) e;
-       } else if (e instanceof ServletException) {
-           throw (ServletException) e;
-       } else if (e instanceof RuntimeException) {
-           throw (RuntimeException) e;
-       } else {
-           throw new ServletException(e);
-       }
+   public static void handleException(Exception e, HttpServletRequest request, HttpServletResponse response,
+      String consumerName) throws IOException, ServletException
+   {
+      if (e instanceof RedirectException)
+      {
+         RedirectException redirect = (RedirectException)e;
+         String targetURL = redirect.getTargetURL();
+         if (targetURL != null)
+         {
+            response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+            response.setHeader("Location", targetURL);
+         }
+      }
+      else if (e instanceof OAuthProblemException)
+      {
+         OAuthProblemException p = (OAuthProblemException)e;
+         String problem = p.getProblem();
+         if (consumerName != null && RECOVERABLE_PROBLEMS.contains(problem))
+         {
+            try
+            {
+               CookieMap cookies = new CookieMap(request, response);
+               OAuthConsumer consumer = ExoOAuthConsumerStorage.getConsumer(consumerName);
+               OAuthAccessor accessor = newAccessor(consumer, cookies);
+               getAccessToken(request, cookies, accessor);
+               // getAccessToken(request, consumer,
+               // new CookieMap(request, response));
+            }
+            catch (Exception e2)
+            {
+               handleException(e2, request, response, null);
+            }
+         }
+         else
+         {
+            try
+            {
+               StringWriter s = new StringWriter();
+               PrintWriter pw = new PrintWriter(s);
+               e.printStackTrace(pw);
+               pw.flush();
+               p.setParameter("stack trace", s.toString());
+            }
+            catch (Exception rats)
+            {
+            }
+            response.setStatus(p.getHttpStatusCode());
+            response.resetBuffer();
+            request.setAttribute("OAuthProblemException", p);
+            request.getRequestDispatcher //
+               ("/OAuthProblemException.jsp").forward(request, response);
+         }
+      }
+      else if (e instanceof IOException)
+      {
+         throw (IOException)e;
+      }
+      else if (e instanceof ServletException)
+      {
+         throw (ServletException)e;
+      }
+      else if (e instanceof RuntimeException)
+      {
+         throw (RuntimeException)e;
+      }
+      else
+      {
+         throw new ServletException(e);
+      }
    }
 
 }

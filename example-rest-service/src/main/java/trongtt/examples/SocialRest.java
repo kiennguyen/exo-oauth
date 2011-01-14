@@ -16,13 +16,13 @@
  */
 package trongtt.examples;
 
+import org.exoplatform.services.rest.resource.ResourceContainer;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-
-import org.exoplatform.services.rest.resource.ResourceContainer;
 
 /**
  * Created by The eXo Platform SAS

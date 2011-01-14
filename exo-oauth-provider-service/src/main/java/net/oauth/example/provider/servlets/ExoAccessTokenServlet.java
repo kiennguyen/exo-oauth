@@ -19,12 +19,11 @@
 
 package net.oauth.example.provider.servlets;
 
-import net.oauth.OAuthValidator;
-
 import net.oauth.OAuth;
 import net.oauth.OAuthAccessor;
 import net.oauth.OAuthMessage;
 import net.oauth.OAuthProblemException;
+import net.oauth.OAuthValidator;
 import net.oauth.example.provider.core.ExoOAuth3LeggedProviderService;
 import net.oauth.server.OAuthServlet;
 

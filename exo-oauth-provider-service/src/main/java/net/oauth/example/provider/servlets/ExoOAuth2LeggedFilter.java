@@ -20,7 +20,6 @@ import net.oauth.OAuth;
 import net.oauth.OAuthAccessor;
 import net.oauth.OAuthMessage;
 import net.oauth.OAuthValidator;
-import net.oauth.example.provider.core.ExoOAuth3LeggedProviderService;
 import net.oauth.example.provider.core.ExoOAuth2LeggedProviderService;
 import net.oauth.server.OAuthServlet;
 

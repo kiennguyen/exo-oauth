@@ -16,18 +16,18 @@
  */
 package net.oauth.example.consumer;
 
+import net.oauth.ConsumerProperties;
+import net.oauth.OAuthConsumer;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
-
-import net.oauth.ConsumerProperties;
-import net.oauth.OAuthConsumer;
 
 /**
  * Created by The eXo Platform SAS
  * Author : Nguyen Anh Kien
  *          nguyenanhkien2a@gmail.com
- * Dec 3, 2010  
+ * Dec 3, 2010 
  */
 public class ExoOAuthConsumerStorage
 {
