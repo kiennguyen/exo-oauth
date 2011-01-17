@@ -53,9 +53,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ExoOAuth3LeggedConsumerService extends ExoOAuth2LeggedConsumerService
 {
-   public ExoOAuth3LeggedConsumerService()
-   {
-   }
+   public ExoOAuth3LeggedConsumerService() {}
 
    public ExoOAuthMessage send(String consumerName, String restEndpointUrl, HttpServletRequest request,
       HttpServletResponse response) throws OAuthException, IOException, URISyntaxException

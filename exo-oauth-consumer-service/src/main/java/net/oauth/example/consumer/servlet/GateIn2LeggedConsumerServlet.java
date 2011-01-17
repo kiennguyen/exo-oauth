@@ -17,6 +17,7 @@
 package net.oauth.example.consumer.servlet;
 
 import net.oauth.example.consumer.ExoOAuthMessage;
+import net.oauth.example.consumer.ExoOAuthUtils;
 import net.oauth.example.consumer.service.ExoOAuth2LeggedConsumerService;
 
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class GateIn2LeggedConsumerServlet extends HttpServlet
       try {
         ExoOAuth2LeggedConsumerService oauthService = new ExoOAuth2LeggedConsumerService();
         ExoOAuthMessage result = oauthService.send(consumer, restEndpointUrl, request, response);
-        ExoOAuth2LeggedConsumerService.copyResponse(result, response);
+        ExoOAuthUtils.copyResponse(result, response);
       } catch (Exception e) {
          ExoOAuth2LeggedConsumerService.handleException(e, request, response, consumer);
       }

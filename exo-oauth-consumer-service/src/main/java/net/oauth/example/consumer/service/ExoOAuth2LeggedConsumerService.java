@@ -28,8 +28,6 @@ import net.oauth.example.consumer.ExoOAuthMessage;
 import net.oauth.example.consumer.RedirectException;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URISyntaxException;
 
 import javax.servlet.ServletException;
@@ -74,30 +72,6 @@ public class ExoOAuth2LeggedConsumerService
    {
       OAuthAccessor accessor = new OAuthAccessor(consumer);
       return accessor;
-   }
-
-   public static void copyResponse(ExoOAuthMessage from, HttpServletResponse into) throws IOException
-   {
-      InputStream in = from.getMessage().getBodyAsStream();
-      OutputStream out = into.getOutputStream();
-      into.setContentType(from.getMessage().getHeader("Content-Type"));
-      try
-      {
-         ExoOAuth2LeggedConsumerService.copyAll(in, out);
-      }
-      finally
-      {
-         in.close();
-      }
-   }
-
-   private static void copyAll(InputStream from, OutputStream into) throws IOException
-   {
-      byte[] buffer = new byte[1024];
-      for (int len; 0 < (len = from.read(buffer, 0, buffer.length));)
-      {
-         into.write(buffer, 0, len);
-      }
    }
 
    /**

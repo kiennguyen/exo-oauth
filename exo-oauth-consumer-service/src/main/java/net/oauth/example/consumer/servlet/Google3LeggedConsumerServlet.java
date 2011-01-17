@@ -17,6 +17,7 @@
 package net.oauth.example.consumer.servlet;
 
 import net.oauth.example.consumer.ExoOAuthMessage;
+import net.oauth.example.consumer.ExoOAuthUtils;
 import net.oauth.example.consumer.service.ExoOAuth3LeggedConsumerService;
 
 import java.io.IOException;
@@ -43,8 +44,8 @@ public class Google3LeggedConsumerServlet extends HttpServlet
     
     try {
        ExoOAuth3LeggedConsumerService oauthService = new ExoOAuth3LeggedConsumerService();
-      ExoOAuthMessage result = oauthService.send(consumer, restEndpointUrl, request, response);
-      ExoOAuth3LeggedConsumerService.copyResponse(result, response);
+       ExoOAuthMessage result = oauthService.send(consumer, restEndpointUrl, request, response);
+       ExoOAuthUtils.copyResponse(result, response);
     } catch (Exception e) {
        ExoOAuth3LeggedConsumerService.handleException(e, request, response, consumer);
     }
