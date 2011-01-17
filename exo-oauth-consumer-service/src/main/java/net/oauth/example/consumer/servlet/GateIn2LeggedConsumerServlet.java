@@ -39,13 +39,13 @@ public class GateIn2LeggedConsumerServlet extends HttpServlet
    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
       String consumer = "gatein";
       String restEndpointUrl = "http://localhost:8080/exo-oauth-provider/rest/SocialRest/infos";      
+      ExoOAuth2LeggedConsumerService oauthService = new ExoOAuth2LeggedConsumerService();
       
-      try {
-        ExoOAuth2LeggedConsumerService oauthService = new ExoOAuth2LeggedConsumerService();
-        ExoOAuthMessage result = oauthService.send(consumer, restEndpointUrl, request, response);
-        ExoOAuthUtils.copyResponse(result, response);
+      try {        
+         ExoOAuthMessage result = oauthService.send(consumer, restEndpointUrl, request, response);
+         ExoOAuthUtils.copyResponse(result, response);
       } catch (Exception e) {
-         ExoOAuth2LeggedConsumerService.handleException(e, request, response, consumer);
+         oauthService.handleException(e, request, response, consumer);
       }
    }
    private static final long serialVersionUID = 1L;

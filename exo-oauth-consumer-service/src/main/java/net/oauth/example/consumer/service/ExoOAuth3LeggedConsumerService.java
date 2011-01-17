@@ -27,6 +27,7 @@ import net.oauth.example.consumer.CookieMap;
 import net.oauth.example.consumer.ExoOAuth3LeggedCallback;
 import net.oauth.example.consumer.ExoOAuthConsumerStorage;
 import net.oauth.example.consumer.ExoOAuthMessage;
+import net.oauth.example.consumer.ExoOAuthUtils;
 import net.oauth.example.consumer.RedirectException;
 import net.oauth.server.OAuthServlet;
 
@@ -67,20 +68,19 @@ public class ExoOAuth3LeggedConsumerService extends ExoOAuth2LeggedConsumerServi
       return (new ExoOAuthMessage(consumerName, responseMessage));
    }
 
-   /**
-    * Construct an accessor from cookies. The resulting accessor won't
-    * necessarily have any tokens.
-    */
-   public static OAuthAccessor newAccessor(OAuthConsumer consumer, CookieMap cookies) throws OAuthException
+   public ExoOAuthMessage send(ExoOAuthMessage requestMessage, HttpServletRequest request,
+         HttpServletResponse response) throws OAuthException, IOException, URISyntaxException
    {
-      OAuthAccessor accessor = new OAuthAccessor(consumer);
-      String consumerName = (String)consumer.getProperty("name");
-      accessor.requestToken = cookies.get(consumerName + ".requestToken");
-      accessor.accessToken = cookies.get(consumerName + ".accessToken");
-      accessor.tokenSecret = cookies.get(consumerName + ".tokenSecret");
-      return accessor;
-   }
+      String consumerName = requestMessage.getConsumerName();
+      OAuthConsumer consumer = ExoOAuthConsumerStorage.getConsumer(consumerName);
+      OAuthAccessor accessor = getAccessor(request, response, consumer);
+      OAuthMessage message = accessor.newRequestMessage(requestMessage.getHttpMethod(), requestMessage.getRestEndpoint(), requestMessage.getParameters());
 
+      OAuthMessage responseMessage =
+         ExoOAuth2LeggedConsumerService.CLIENT.invoke(message, ParameterStyle.AUTHORIZATION_HEADER);
+      return (new ExoOAuthMessage(consumerName, responseMessage));
+   }
+   
    /**
     * Get the access token and token secret for the given consumer. Get them
     * from cookies if possible; otherwise obtain them from the service
@@ -92,7 +92,7 @@ public class ExoOAuth3LeggedConsumerService extends ExoOAuth2LeggedConsumerServi
       OAuthConsumer consumer) throws OAuthException, IOException, URISyntaxException
    {
       CookieMap cookies = new CookieMap(request, response);
-      OAuthAccessor accessor = newAccessor(consumer, cookies);
+      OAuthAccessor accessor = ExoOAuthUtils.newAccessor(consumer, cookies);
       if (accessor.accessToken == null)
       {
          getAccessToken(request, cookies, accessor);
@@ -196,7 +196,7 @@ public class ExoOAuth3LeggedConsumerService extends ExoOAuth2LeggedConsumerServi
     * Depending on the exception, either send a response, redirect the client
     * or propagate an exception.
     */
-   public static void handleException(Exception e, HttpServletRequest request, HttpServletResponse response,
+   public void handleException(Exception e, HttpServletRequest request, HttpServletResponse response,
       String consumerName) throws IOException, ServletException
    {
       if (e instanceof RedirectException)
@@ -219,7 +219,7 @@ public class ExoOAuth3LeggedConsumerService extends ExoOAuth2LeggedConsumerServi
             {
                CookieMap cookies = new CookieMap(request, response);
                OAuthConsumer consumer = ExoOAuthConsumerStorage.getConsumer(consumerName);
-               OAuthAccessor accessor = newAccessor(consumer, cookies);
+               OAuthAccessor accessor = ExoOAuthUtils.newAccessor(consumer, cookies);
                getAccessToken(request, cookies, accessor);
                // getAccessToken(request, consumer,
                // new CookieMap(request, response));

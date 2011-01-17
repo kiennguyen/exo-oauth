@@ -16,7 +16,13 @@
  */
 package net.oauth.example.consumer;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+
 import net.oauth.OAuthMessage;
+import net.oauth.OAuth.Parameter;
 
 /**
  * Created by The eXo Platform SAS
@@ -28,12 +34,20 @@ public class ExoOAuthMessage
 {
    private String consumerName;
    private OAuthMessage message;
+   public static final String GET = OAuthMessage.GET;
+   public static final String POST = OAuthMessage.POST;
+   public static final String PUT = OAuthMessage.PUT;
+   public static final String DELETE = OAuthMessage.DELETE;
    
    public ExoOAuthMessage() {}
    
    public ExoOAuthMessage(String consumerName, OAuthMessage message) {
       this.consumerName = consumerName;
       this.message = message;
+   }
+   
+   public ExoOAuthMessage(String consumerName, String restEndpoint, String httpMethod, List<Parameter> parameters) {
+      this.consumerName = consumerName;      
    }
 
    public void setConsumerName(String consumerName)
@@ -46,13 +60,38 @@ public class ExoOAuthMessage
       return consumerName;
    }
    
+   public void setHttpMethod(String httpMethod)
+   {
+      this.message.method = httpMethod;
+   }
+   
+   public void setRestEndpoint(String restEndpoint)
+   {
+      this.message.URL = restEndpoint;
+   }
+   
    public void setMessage(OAuthMessage message)
    {
       this.message = message;
    }
-
-   public OAuthMessage getMessage()
-   {
-      return message;
+   
+   public String getRestEndpoint() {
+      return message.URL;
+   }
+   
+   public String getHttpMethod() {
+      return message.method;
+   }
+   
+   public List<Map.Entry<String, String>> getParameters() throws IOException {
+      return message.getParameters();
+   }
+   
+   public InputStream getBodyAsStream() throws IOException {
+      return message.getBodyAsStream();
+   }
+   
+   public String getHeader(String name) {
+      return message.getHeader(name);
    }
 }

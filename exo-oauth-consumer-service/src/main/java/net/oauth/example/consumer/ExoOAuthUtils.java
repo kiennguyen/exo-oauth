@@ -22,6 +22,10 @@ import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
+import net.oauth.OAuthAccessor;
+import net.oauth.OAuthConsumer;
+import net.oauth.OAuthException;
+
 /**
  * Created by The eXo Platform SAS
  * Author : Nguyen Anh Kien
@@ -31,6 +35,20 @@ import javax.servlet.http.HttpServletResponse;
 public class ExoOAuthUtils
 {   
    /**
+    * Construct an accessor from cookies. The resulting accessor won't
+    * necessarily have any tokens.
+    */
+   public static OAuthAccessor newAccessor(OAuthConsumer consumer, CookieMap cookies) throws OAuthException
+   {
+      OAuthAccessor accessor = new OAuthAccessor(consumer);
+      String consumerName = (String)consumer.getProperty("name");
+      accessor.requestToken = cookies.get(consumerName + ".requestToken");
+      accessor.accessToken = cookies.get(consumerName + ".accessToken");
+      accessor.tokenSecret = cookies.get(consumerName + ".tokenSecret");
+      return accessor;
+   }
+   
+   /**
     * 
     * @param from
     * @param into
@@ -38,9 +56,9 @@ public class ExoOAuthUtils
     */
    public static void copyResponse(ExoOAuthMessage from, HttpServletResponse into) throws IOException
    {
-      InputStream in = from.getMessage().getBodyAsStream();
+      InputStream in = from.getBodyAsStream();
       OutputStream out = into.getOutputStream();
-      into.setContentType(from.getMessage().getHeader("Content-Type"));
+      into.setContentType(from.getHeader("Content-Type"));
       try
       {
          ExoOAuthUtils.copyAll(in, out);

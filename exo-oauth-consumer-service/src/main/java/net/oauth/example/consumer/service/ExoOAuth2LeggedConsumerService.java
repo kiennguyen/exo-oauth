@@ -79,7 +79,7 @@ public class ExoOAuth2LeggedConsumerService
     * Depending on the exception, either send a response, redirect the client
     * or propagate an exception.
     */
-   public static void handleException(Exception e, HttpServletRequest request, HttpServletResponse response,
+   public void handleException(Exception e, HttpServletRequest request, HttpServletResponse response,
       String consumerName) throws IOException, ServletException
    {
       if (e instanceof RedirectException)

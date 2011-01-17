@@ -43,6 +43,8 @@ public class ExoOAuth3LeggedCallback extends HttpServlet {
     public static final String PATH = "/OAuth/ExoOAuth3LeggedCallback";
 
     protected final Logger log = Logger.getLogger(getClass().getName());
+    
+    private final ExoOAuth3LeggedConsumerService oauthService = new ExoOAuth3LeggedConsumerService();
 
     /**
      * Exchange an OAuth request token for an access token, and store the latter
@@ -59,7 +61,7 @@ public class ExoOAuth3LeggedCallback extends HttpServlet {
             requestMessage.requireParameters("consumer");
             consumer = ExoOAuthConsumerStorage.getConsumer(consumerName);
             final CookieMap cookies = new CookieMap(request, response);
-            final OAuthAccessor accessor = ExoOAuth3LeggedConsumerService.newAccessor(consumer,
+            final OAuthAccessor accessor = ExoOAuthUtils.newAccessor(consumer,
                     cookies);
             final String expectedToken = accessor.requestToken;
             String requestToken = requestMessage.getParameter(OAuth.OAUTH_TOKEN);
@@ -103,7 +105,7 @@ public class ExoOAuth3LeggedCallback extends HttpServlet {
             problem.getParameters().putAll(result.getDump());
             throw problem;
         } catch (Exception e) {
-            ExoOAuth3LeggedConsumerService.handleException(e, request, response, consumerName);
+            oauthService.handleException(e, request, response, consumerName);
         }
     }
 

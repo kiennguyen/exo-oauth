@@ -41,13 +41,13 @@ public class GateIn3LeggedConsumerServlet extends HttpServlet
    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
     String consumer = "gatein";
     String restEndpointUrl = "http://localhost:8080/exo-oauth-provider/rest/SimpleRest/hello/lambkin";     
+    ExoOAuth3LeggedConsumerService oauthService = new ExoOAuth3LeggedConsumerService();
     
-    try {
-       ExoOAuth3LeggedConsumerService oauthService = new ExoOAuth3LeggedConsumerService();
+    try {  
        ExoOAuthMessage result = oauthService.send(consumer, restEndpointUrl, request, response);
        ExoOAuthUtils.copyResponse(result, response);
     } catch (Exception e) {
-       ExoOAuth3LeggedConsumerService.handleException(e, request, response, consumer);
+       oauthService.handleException(e, request, response, consumer);
     }
    }
 }

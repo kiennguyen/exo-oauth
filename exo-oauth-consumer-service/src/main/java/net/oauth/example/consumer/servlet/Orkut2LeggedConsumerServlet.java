@@ -41,13 +41,13 @@ public class Orkut2LeggedConsumerServlet extends HttpServlet
    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
     String consumer = "orkut";
     String restEndpointUrl = "http://sandbox.orkut.com/social/rest/appdata/@me/@self/@app?xoauth_requestor_id=03067092798963641994";     
+    ExoOAuth2LeggedConsumerService oauthService = new ExoOAuth2LeggedConsumerService();
     
-    try {
-      ExoOAuth2LeggedConsumerService oauthService = new ExoOAuth2LeggedConsumerService();
+    try {  
       ExoOAuthMessage result = oauthService.send(consumer, restEndpointUrl, request, response);
       ExoOAuthUtils.copyResponse(result, response);
     } catch (Exception e) {
-      ExoOAuth2LeggedConsumerService.handleException(e, request, response, consumer);
+      oauthService.handleException(e, request, response, consumer);
     }
    }
 }
