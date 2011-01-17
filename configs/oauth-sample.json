@@ -39,17 +39,17 @@
          "key_type"        : "RSA_PRIVATE"
       }
   },
-  "http://localhost:8080/example-oauth-gadget/gadgets/SimpleOauth/simple-oauth-gadget.xml" : {
-    "simple-oauth-gadget" : {
-      "consumer_key" : "simple-oauth-gadget",
-      "consumer_secret" : "mySecret",
+  "http://localhost:8080/example-oauth-gadget/gadgets/simple-oauth-gadget.xml" : {
+    "simple-oauth" : {
+      "consumer_key" : "simple-oauth-key",
+      "consumer_secret" : "simple-oauth-secret",
       "key_type" : "PLAINTEXT"
     }
   },
-  "http://localhost:8080/example-oauth-gadget/gadgets/SigningOauth/signing-oauth-gadget.xml" : {
-    "signing-oauth-gadget" : {
-      "consumer_key" : "signing-oauth-gadget",
-      "consumer_secret" : "mySecret",
+  "http://localhost:8080/example-oauth-gadget/gadgets/signing-oauth-gadget.xml" : {
+    "signing-oauth" : {
+      "consumer_key" : "signing-oauth-key",
+      "consumer_secret" : "signing-oauth-secret",
       "key_type" : "PLAINTEXT"
     }
   }
