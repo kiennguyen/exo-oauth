@@ -39,7 +39,7 @@ public class GateIn3LeggedConsumerServlet extends HttpServlet
    
    @Override
    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-    String consumer = "gatein";
+    String consumer = "gatein3";
     String restEndpointUrl = "http://localhost:8080/exo-oauth-provider/rest/SimpleRest/hello/lambkin";     
     ExoOAuth3LeggedConsumerService oauthService = new ExoOAuth3LeggedConsumerService();
     

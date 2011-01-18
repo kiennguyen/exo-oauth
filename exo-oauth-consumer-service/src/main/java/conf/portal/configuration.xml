@@ -26,7 +26,11 @@
    xmlns="http://www.exoplaform.org/xml/ns/kernel_1_1.xsd">
    
   <component>
-    <type>net.oauth.example.consumer.service.OAuth3LeggedConsumerService</type>
+    <type>net.oauth.example.consumer.service.ExoOAuth2LeggedConsumerService</type>
   </component>
-
+  
+  <component>
+    <type>net.oauth.example.consumer.service.ExoOAuth3LeggedConsumerService</type>
+  </component>
+    
 </configuration>
