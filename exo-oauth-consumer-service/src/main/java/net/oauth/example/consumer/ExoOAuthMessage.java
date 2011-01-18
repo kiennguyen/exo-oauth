@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.oauth.OAuthMessage;
-import net.oauth.OAuth.Parameter;
 
 /**
  * Created by The eXo Platform SAS
@@ -47,7 +46,8 @@ public class ExoOAuthMessage
    }
    
    public ExoOAuthMessage(String consumerName, String restEndpoint, String httpMethod, List<Parameter> parameters) {
-      this.consumerName = consumerName;      
+      this.consumerName = consumerName;          
+      this.message = new OAuthMessage(httpMethod, restEndpoint, parameters);
    }
 
    public void setConsumerName(String consumerName)

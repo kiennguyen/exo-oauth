@@ -31,7 +31,10 @@
       <servlet-name>Yahoo3LeggedConsumerServlet</servlet-name>
       <servlet-class>net.oauth.example.consumer.servlet.Yahoo3LeggedConsumerServlet</servlet-class>
    </servlet>
-   
+   <servlet>
+      <servlet-name>Twitter3LeggedConsumerServlet</servlet-name>
+      <servlet-class>net.oauth.example.consumer.servlet.Twitter3LeggedConsumerServlet</servlet-class>
+   </servlet>
    
    <servlet-mapping>
       <servlet-name>ExoOAuth3LeggedCallback</servlet-name>
@@ -56,5 +59,9 @@
    <servlet-mapping>
       <servlet-name>Yahoo3LeggedConsumerServlet</servlet-name>
       <url-pattern>/Yahoo</url-pattern>
+   </servlet-mapping>
+   <servlet-mapping>
+      <servlet-name>Twitter3LeggedConsumerServlet</servlet-name>
+      <url-pattern>/Twitter</url-pattern>
    </servlet-mapping>
 </web-app>

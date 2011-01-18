@@ -39,14 +39,14 @@
          "key_type"        : "RSA_PRIVATE"
       }
   },
-  "http://localhost:8080/example-oauth-gadget/gadgets/simple-oauth-gadget.xml" : {
+  "http://localhost:8080/rest/jcr/repository/portal-system/production/app:gadgets/app:SigningOauth/app:data/app:resources/signing-oauth-gadget.xml" : {
     "simple-oauth" : {
       "consumer_key" : "simple-oauth-key",
       "consumer_secret" : "simple-oauth-secret",
       "key_type" : "PLAINTEXT"
     }
   },
-  "http://localhost:8080/example-oauth-gadget/gadgets/signing-oauth-gadget.xml" : {
+  "http://localhost:8080/rest/jcr/repository/portal-system/production/app:gadgets/app:SimpleOauth/app:data/app:resources/simple-oauth-gadget.xml" : {
     "signing-oauth" : {
       "consumer_key" : "signing-oauth-key",
       "consumer_secret" : "signing-oauth-secret",
