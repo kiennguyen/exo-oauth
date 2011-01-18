@@ -26,10 +26,10 @@
    xmlns="http://www.gatein.org/xml/ns/gadgets_1_0">
 
    <gadget name="SimpleOauth">
-      <path>/gadgets/SimpleOauth/simple-oauth-gadget.xml</path>
+      <path>/gadgets/simple-oauth-gadget.xml</path>
    </gadget>
 
    <gadget name="SigningOauth">
-      <path>/gadgets/SigningOauth/signing-oauth-gadget.xml</path>
+      <path>/gadgets/signing-oauth-gadget.xml</path>
    </gadget>
 </gadgets>
