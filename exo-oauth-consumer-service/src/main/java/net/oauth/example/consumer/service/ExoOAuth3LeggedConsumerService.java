@@ -47,6 +47,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Class operate as service of GateIn, it is compliant OAuth 2.0 specification, it can be called OAuth three legged
+ * it used to send OAuth request to endpoint to get data
+ * There are many steps for handshake, authentication, authorization between this service and OAuth provider. 
+ * See OAuth 2.0 specification for more detail 
+ * 
  * Created by The eXo Platform SAS
  * Author : Nguyen Anh Kien
  *          nguyenanhkien2a@gmail.com
@@ -55,19 +60,42 @@ import javax.servlet.http.HttpServletResponse;
 public class ExoOAuth3LeggedConsumerService extends ExoOAuth2LeggedConsumerService
 {
    public ExoOAuth3LeggedConsumerService() {}
-
-   public ExoOAuthMessage send(String consumerName, String restEndpointUrl, HttpServletRequest request,
+   
+   /**
+    * Send a request to REST endpoint
+    * 
+    * @param consumerName name of consumer that was stored in database, service will use this name
+    * to query consumer information as key, secret, signature method, OAuth request url, 
+    * OAuth authorization url, OAuth access url
+    * @param restEndpoint the service url to get data
+    * @param request the http servlet request
+    * @param response the http servlet response
+    * @thows IOException, OAuthException, URISyntaxException
+    */
+   @Override
+   public ExoOAuthMessage send(String consumerName, String restEndpoint, HttpServletRequest request,
       HttpServletResponse response) throws OAuthException, IOException, URISyntaxException
    {
       OAuthConsumer consumer = ExoOAuthConsumerStorage.getConsumer(consumerName);
       OAuthAccessor accessor = getAccessor(request, response, consumer);
-      OAuthMessage message = accessor.newRequestMessage(OAuthMessage.GET, restEndpointUrl, null);
+      OAuthMessage message = accessor.newRequestMessage(OAuthMessage.GET, restEndpoint, null);
 
       OAuthMessage responseMessage =
          ExoOAuth2LeggedConsumerService.CLIENT.invoke(message, ParameterStyle.AUTHORIZATION_HEADER);
       return (new ExoOAuthMessage(consumerName, responseMessage));
    }
 
+   /**
+    * Send a request to REST endpoint
+    * 
+    * @param requestMessage An ExoOAuthMessage object that contains neccessary information of request 
+    * such as name of consumer that was stored in database, REST endpoint, http request method, etc.
+    * @param request the http servlet request
+    * @param response the http servlet response
+    * @thows IOException, OAuthException, URISyntaxException
+    * @return ExoOAuthMessage object
+    */
+   @Override
    public ExoOAuthMessage send(ExoOAuthMessage requestMessage, HttpServletRequest request,
          HttpServletResponse response) throws OAuthException, IOException, URISyntaxException
    {

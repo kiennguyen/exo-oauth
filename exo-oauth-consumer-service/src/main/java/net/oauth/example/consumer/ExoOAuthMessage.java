@@ -29,6 +29,9 @@ import net.oauth.OAuthMessage;
  *          nguyenanhkien2a@gmail.com
  * Dec 4, 2010  
  */
+/**
+ * This class used to contain information for an OAuth request or an OAuth response
+ */
 public class ExoOAuthMessage
 {
    private String consumerName;

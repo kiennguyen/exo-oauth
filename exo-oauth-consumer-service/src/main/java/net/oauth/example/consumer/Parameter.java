@@ -21,6 +21,8 @@ import java.util.Map;
 import net.oauth.OAuth;
 
 /**
+ * Represent request's parameter object, it contains two properties: key, value
+ * 
  * Created by The eXo Platform SAS
  * Author : Nguyen Anh Kien
  *          nguyenanhkien2a@gmail.com

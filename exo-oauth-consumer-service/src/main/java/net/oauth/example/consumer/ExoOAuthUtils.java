@@ -49,7 +49,7 @@ public class ExoOAuthUtils
    }
    
    /**
-    * 
+    * Copy data from ExoOAuthMessage object to a HttpServletResponse object
     * @param from
     * @param into
     * @throws IOException
@@ -70,7 +70,7 @@ public class ExoOAuthUtils
    }
 
    /**
-    * 
+    * Copy all data from InputStream object to OutputStream object
     * @param from
     * @param into
     * @throws IOException
