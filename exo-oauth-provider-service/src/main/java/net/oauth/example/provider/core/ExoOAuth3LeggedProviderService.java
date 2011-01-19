@@ -32,6 +32,10 @@ import org.exoplatform.services.security.Identity;
 import java.io.IOException;
 
 /**
+ * Operate as GateIn service, class process three legged model as OAuth 2.0 specification
+ * class manage all tokens, object accessing (accessor) of OAuth session
+ * see OAuth 2.0 specification for more detail
+ * 
  * @author <a href="trongtt@gmail.com">Trong Tran</a>
  * @version $Revision$
  */
@@ -47,10 +51,13 @@ public class ExoOAuth3LeggedProviderService  extends ExoOAuth2LeggedProviderServ
 
    /**
     * Get the access token and token secret for the given oauth_token. 
+    * @param requestMessage
+    * @return OAuthAccessor information is packaged into OAuthAccessor object
+    * @throws IOException
+    * @thows OAuthProblemException
     */
    public OAuthAccessor getAccessor(OAuthMessage requestMessage) throws IOException, OAuthProblemException
    {
-
       // try to load from local cache if not throw exception
       String consumer_token = requestMessage.getToken();
       OAuthAccessor accessor = null;
@@ -83,30 +90,25 @@ public class ExoOAuth3LeggedProviderService  extends ExoOAuth2LeggedProviderServ
    }
 
    /**
-    * Set the access token 
+    * Set the access token by marking this accessor as authorized
+    * @param accessor object will be set authorized state
+    * @param identity object as real user from database
+    * @throws OAuthException
     */
    public synchronized void markAsAuthorized(OAuthAccessor accessor, Identity identity) throws OAuthException
    {
-
-      // first remove the accessor from cache
-      //      ALL_TOKENS.remove(accessor);
-
       accessor.setProperty("user", identity.getUserId());
       accessor.setProperty("user_roles", identity.getRoles());
       accessor.setProperty("authorized", Boolean.TRUE);
-
-      // update token in local cache
-      //      ALL_TOKENS.add(accessor);
    }
 
    /**
     * Generate a fresh request token and secret for a consumer.
-    * 
+    * @param accessor object will contain token
     * @throws OAuthException
     */
    public synchronized void generateRequestToken(OAuthAccessor accessor) throws OAuthException
    {
-
       // generate oauth_token and oauth_secret
       String consumer_key = (String)accessor.consumer.getProperty("name");
       // generate token and secret based on consumer_key
@@ -128,8 +130,8 @@ public class ExoOAuth3LeggedProviderService  extends ExoOAuth2LeggedProviderServ
    }
 
    /**
-    * Generate a fresh request token and secret for a consumer.
-    * 
+    * Generate a fresh access token and secret for a consumer. and clear request token
+    * @param accessor object will contain token
     * @throws OAuthException
     */
    public synchronized void generateAccessToken(OAuthAccessor accessor) throws OAuthException

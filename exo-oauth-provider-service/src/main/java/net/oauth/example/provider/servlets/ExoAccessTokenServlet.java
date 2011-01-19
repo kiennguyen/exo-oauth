@@ -38,11 +38,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Servlet is last call after authentication and authorization complete.
+ * this servlet will create a access token for getting resource
+ * 
+ * See OAuth 2.0 specification for more information
+ * 
  * @author <a href="trongtt@gmail.com">Trong Tran</a>
  * @version $Revision$
  */
 public class ExoAccessTokenServlet extends AbstractHttpServlet
 {
+   private static final long serialVersionUID = 1L;
+   
    @Override
    protected void onService(ExoContainer container, HttpServletRequest req, HttpServletResponse res)
       throws ServletException, IOException

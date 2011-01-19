@@ -31,12 +31,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * An Servlet for testing OAuth protection
+ * 
  * @author <a href="trongtt@gmail.com">Trong Tran</a>
  * @version $Revision$
  */
 public class OAuthProtectedServlet extends HttpServlet
 {
-
+   private static final long serialVersionUID = 1L;
+   
    @Override
    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
    {

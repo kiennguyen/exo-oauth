@@ -31,6 +31,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Operate as GateIn service, class process two legged OAuth model as OAuth 1.0 specification
+ * class manages all tokens, accessor of OAuth session. And it also handle exception 
+ * whenever OAuth step fails
+ * See OAuth 1.0 specification for more detail
+ * 
  * Created by The eXo Platform SAS
  * Author : Nguyen Anh Kien
  *          nguyenanhkien2a@gmail.com
@@ -40,7 +45,13 @@ public class ExoOAuth2LeggedProviderService
 {    
    public ExoOAuth2LeggedProviderService() {
    }
-
+   /**
+    * Get a consumer from database, throw exception if consumer is not found
+    * @param requestMessage a request message contains consumer information
+    * @return OAuthConsumer contains consumer information as key, secret, etc
+    * @throws IOException
+    * @throws OAuthProblemException
+    */
    public synchronized OAuthConsumer getConsumer(OAuthMessage requestMessage) throws IOException, OAuthProblemException
    {
 
@@ -53,13 +64,20 @@ public class ExoOAuth2LeggedProviderService
 
       if (consumer == null)
       {
-         OAuthProblemException problem = new OAuthProblemException("token_rejected");
+         OAuthProblemException problem = new OAuthProblemException("token_rejected, consumer hasn't yet registered with provider");
          throw problem;
       }
 
       return consumer;
    }
    
+   /**
+    * Create an accessor
+    * @param requestMessage request message contains consumer information
+    * @return OAuthAccessor
+    * @throws IOException
+    * @throws OAuthProblemException
+    */
    public OAuthAccessor getAccessor(OAuthMessage requestMessage) throws IOException, OAuthProblemException
    {
       OAuthConsumer authConsumer = getConsumer(requestMessage);
@@ -67,6 +85,15 @@ public class ExoOAuth2LeggedProviderService
       return accessor;
    }
    
+   /**
+    * Process exception of OAuth session
+    * @param e
+    * @param request
+    * @param response
+    * @param sendBody
+    * @throws IOException
+    * @throws ServletException
+    */
    public static void handleException(Exception e, HttpServletRequest request, HttpServletResponse response,
          boolean sendBody) throws IOException, ServletException
       {

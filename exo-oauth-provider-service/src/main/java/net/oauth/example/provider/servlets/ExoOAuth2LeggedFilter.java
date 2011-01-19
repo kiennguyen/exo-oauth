@@ -36,6 +36,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * A Filter used to authorize a request that follows OAuth two legged flows
+ * Apps can use OAuth protection by adding this filter to their filter chain
+ * The Filter will validate some information: 
+ * - oauth_consumer_key string know as consumer key
+ * - oauth_signature_method algorithm used to sign, support three algorithms: PLAINTEXT, HMAC_SYMMETRIC (HMAC_SHA1), RSA_PRIVATE (RSA-SHA1)
+ * - oauth_timestamp time stamp to avoid 
+ * - oauth_nonce salt string create by service
+ * - oauth_version version of OAuth specification (1.0, 2.0)
+ * - oauth_signature signature that signed this request
+ * 
+ * See OAuth 1.0 specification for more detail
+ * 
  * Created by The eXo Platform SAS
  * Author : Nguyen Anh Kien
  *          nguyenanhkien2a@gmail.com

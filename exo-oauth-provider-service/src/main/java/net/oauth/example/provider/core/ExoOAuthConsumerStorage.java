@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
+ * Manage all consumers, class will be loaded within portal startup
+ * 
  * Created by The eXo Platform SAS
  * Author : Nguyen Anh Kien
  *          nguyenanhkien2a@gmail.com
@@ -37,6 +39,7 @@ import java.util.Properties;
  */
 public class ExoOAuthConsumerStorage implements Startable
 {
+   /*store all consumers into map with consumer key as identifier*/
    private static final Map<String, OAuthConsumer> ALL_CONSUMERS = Collections
    .synchronizedMap(new HashMap<String, OAuthConsumer>(10));
 
@@ -56,6 +59,10 @@ public class ExoOAuthConsumerStorage implements Startable
    {
    }
    
+   /**
+    * Load all consumers from a file and store them into memory
+    * @throws IOException
+    */
    private void loadConsumers() throws IOException
    {
       Properties p = new Properties();
@@ -97,6 +104,14 @@ public class ExoOAuthConsumerStorage implements Startable
       }
    }
    
+   /**
+    * Get a consumer from consumer list
+    * 
+    * @param consumer_key key as identifier of consumer
+    * @return OAuthConsumer object
+    * @throws IOException
+    * @throws OAuthProblemException
+    */
    public OAuthConsumer getConsumer(String consumer_key) throws IOException, OAuthProblemException
    {
       return ExoOAuthConsumerStorage.ALL_CONSUMERS.get(consumer_key);

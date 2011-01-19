@@ -38,11 +38,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Servlet process the first request, it validate information to avoid malform request or attacking
+ * After validating complete, it create a token calls Request token for authorization step later
+ * 
+ * See OAuth 2.0 specification for more detail
+ * 
  * @author <a href="trongtt@gmail.com">Trong Tran</a>
  * @version $Revision$
  */
 public class ExoRequestTokenServlet extends AbstractHttpServlet
 {
+   private static final long serialVersionUID = 1L;
+   
    @Override
    protected void onService(ExoContainer container, HttpServletRequest req, HttpServletResponse res)
       throws ServletException, IOException

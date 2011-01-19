@@ -41,40 +41,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Servlet used to authorize request by validating username, password from user
+ * this servlet will be called after OAuth request passed
+ * 
+ * See OAuth 2.0 specification for more detail
+ * 
  * @author <a href="trongtt@gmail.com">Trong Tran</a>
  * @version $Revision$
  */
 public class ExoAuthorizationServlet extends AbstractHttpServlet
 {
-//   @Override
-//   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
-//   {
-//
-//      try
-//      {
-//         OAuthMessage requestMessage = OAuthServlet.getMessage(request, null);
-//
-//         ExoOAuthProviderService provider = (ExoOAuthProviderService)container.getComponentInstanceOfType(ExoOAuthProviderService.class);
-//         OAuthAccessor accessor = provider.getAccessor(requestMessage);
-//
-//         if (Boolean.TRUE.equals(accessor.getProperty("authorized")))
-//         {
-//            // already authorized send the user back
-//            returnToConsumer(request, response, accessor);
-//         }
-//         else
-//         {
-//            sendToAuthorizePage(request, response, accessor);
-//         }
-//
-//      }
-//      catch (Exception e)
-//      {
-//         ExoOAuthProviderService.handleException(e, request, response, true);
-//      }
-//
-//   }
-
    @Override
    protected void onService(ExoContainer container, HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException
@@ -127,6 +103,14 @@ public class ExoAuthorizationServlet extends AbstractHttpServlet
       }
    }
 
+   /**
+    * Redirect to authorize page to make authorization again
+    * @param request
+    * @param response
+    * @param accessor
+    * @throws IOException
+    * @throws ServletException
+    */
    private void sendToAuthorizePage(HttpServletRequest request, HttpServletResponse response, OAuthAccessor accessor)
       throws IOException, ServletException
    {
@@ -142,6 +126,14 @@ public class ExoAuthorizationServlet extends AbstractHttpServlet
 
    }
 
+   /**
+    * Redirect to consumer URL
+    * @param request
+    * @param response
+    * @param accessor
+    * @throws IOException
+    * @throws ServletException
+    */
    private void returnToConsumer(HttpServletRequest request, HttpServletResponse response, OAuthAccessor accessor)
       throws IOException, ServletException
    {
