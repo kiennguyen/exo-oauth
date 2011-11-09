@@ -22,7 +22,7 @@ import net.oauth.OAuthException;
 import net.oauth.OAuthMessage;
 import net.oauth.ParameterStyle;
 import net.oauth.client.OAuthClient;
-import net.oauth.client.httpclient3.HttpClient3;
+import net.oauth.client.httpclient4.HttpClient4;
 import net.oauth.example.consumer.ExoOAuthConsumerStorage;
 import net.oauth.example.consumer.ExoOAuthMessage;
 import net.oauth.example.consumer.RedirectException;
@@ -55,7 +55,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ExoOAuth2LeggedConsumerService
 {
-   public static final OAuthClient CLIENT = new OAuthClient(new HttpClient3());
+   public static final OAuthClient CLIENT = new OAuthClient(new HttpClient4());
 
    public ExoOAuth2LeggedConsumerService() {}
 

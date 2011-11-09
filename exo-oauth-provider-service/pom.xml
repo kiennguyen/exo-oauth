@@ -11,16 +11,26 @@
    <packaging>jar</packaging>
    <dependencies>
       <dependency>
+         <groupId>commons-codec</groupId>
+         <artifactId>commons-codec</artifactId>
+         <version>1.4</version>
+         </dependency>
+      <dependency>
          <groupId>javax.servlet</groupId>
          <artifactId>servlet-api</artifactId>
          <version>2.5</version>
          <scope>provided</scope>
       </dependency>
       <dependency>
-         <groupId>net.oauth</groupId>
-         <artifactId>core</artifactId>
-         <version>20080621</version>
+         <groupId>net.oauth.core</groupId>
+         <artifactId>oauth</artifactId>
+         <version>20100527</version>
          <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>net.oauth.core</groupId>
+         <artifactId>oauth-provider</artifactId>
+         <version>20100527</version>
       </dependency>
       <dependency>
          <groupId>org.exoplatform.kernel</groupId>
